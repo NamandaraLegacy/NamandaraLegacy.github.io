@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hali Namandari Translator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-bg: #0a0415;
+            --purple-dark: #1a0636;
+            --purple-medium: #4a1e7a;
+            --purple-light: #8c52ff;
+            --purple-glow: #c874ff;
+            --pink-light: #ff8cdb;
+            --text-color: #f2e6ff;
+            --card-bg: rgba(45, 15, 84, 0.7);
+            --blur-strength: 8px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-bg), var(--purple-dark));
+            color: var(--text-color);
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Particle container */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -3;
+        }
+        
+        /* Blurred background effect */
+        .blurred-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, var(--purple-medium) 0%, var(--dark-bg) 70%);
+            filter: blur(var(--blur-strength));
+            z-index: -2;
+            opacity: 0.5;
+        }
+        
+        /* Glowing orbs in background */
+        .orbs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.15;
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        .orb:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: var(--purple-light);
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .orb:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            background: var(--pink-light);
+            top: 60%;
+            left: 80%;
+            animation-delay: -5s;
+        }
+        
+        .orb:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            background: var(--purple-glow);
+            top: 30%;
+            left: 70%;
+            animation-delay: -10s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(-40px, 30px) scale(1.05); }
+            50% { transform: translate(0, 60px) scale(1); }
+            75% { transform: translate(40px, 30px) scale(1.05); }
+        }
+        
+        /* Main container */
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 0 50px rgba(140, 82, 255, 0.6),
+                inset 0 0 30px rgba(200, 116, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            margin-bottom: 40px;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--purple-glow), 
+                var(--pink-light), 
+                var(--purple-glow), 
+                transparent);
+            animation: scanline 3s linear infinite;
+        }
+        
+        @keyframes scanline {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        h1 {
+            color: var(--text-color);
+            text-shadow: 0 0 20px var(--purple-glow);
+            margin-bottom: 15px;
+            font-size: 3.5rem;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            color: var(--text-color);
+            opacity: 0.8;
+            font-size: 1.3rem;
+            margin-top: 15px;
+            text-shadow: 0 0 5px var(--purple-glow);
+        }
+        
+        /* Content layout */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: rgba(60, 25, 110, 0.4);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .panel:focus-within,
+        .panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(140, 82, 255, 0.7);
+            border-color: var(--purple-glow);
+        }
+        
+        .panel-title {
+            color: var(--pink-light);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 10px var(--pink-light);
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--purple-light);
+            background: rgba(35, 15, 65, 0.6);
+            color: var(--text-color);
+            font-size: 16px;
+            min-height: 180px;
+            resize: vertical;
+            transition: all 0.3s ease;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--pink-light);
+            box-shadow: 0 0 20px var(--pink-light);
+        }
+        
+        .output {
+            background: rgba(35, 15, 65, 0.6);
+            border: 1px solid var(--purple-light);
+            padding: 25px;
+            border-radius: 12px;
+            min-height: 180px;
+            font-size: 24px;
+            word-break: break-word;
+            line-height: 1.8;
+            text-align: center;
+            text-shadow: 0 0 5px var(--purple-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .output:hover {
+            border-color: var(--pink-light);
+            box-shadow: 0 0 20px var(--pink-light);
+        }
+        
+        /* Buttons */
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        @media (max-width: 600px) {
+            .buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        button {
+            background: linear-gradient(145deg, var(--purple-medium), var(--purple-light));
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            color: white;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(140, 82, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(200, 116, 255, 0.6);
+            background: linear-gradient(145deg, var(--purple-light), var(--pink-light));
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .clear-btn {
+            background: linear-gradient(145deg, #6a2ca8, #8e44ad);
+        }
+        
+        .clear-btn:hover {
+            background: linear-gradient(145deg, #8e44ad, #e056fd);
+        }
+        
+        /* Alphabet section */
+        .alphabet-section {
+            margin-top: 40px;
+        }
+        
+        .alphabet-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--pink-light);
+            font-size: 2rem;
+            text-shadow: 0 0 10px var(--pink-light);
+        }
+        
+        .letters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 15px;
+        }
+        
+        .letter-card {
+            background: rgba(60, 25, 110, 0.4);
+            border: 1px solid var(--purple-light);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        
+        .letter-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--pink-light);
+            box-shadow: 0 8px 20px rgba(200, 116, 255, 0.5);
+        }
+        
+        .english-char {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--pink-light);
+            margin-bottom: 8px;
+            text-shadow: 0 0 5px var(--pink-light);
+        }
+        
+        .namandari-char {
+            font-size: 32px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            text-shadow: 0 0 8px var(--purple-glow);
+        }
+        
+        .char-name {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        
+        /* History section */
+        .history-section {
+            margin-top: 50px;
+            padding: 25px;
+            background: rgba(60, 25, 110, 0.4);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .history-title {
+            color: var(--pink-light);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-shadow: 0 0 10px var(--pink-light);
+        }
+        
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .history-item {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            background: rgba(35, 15, 65, 0.6);
+            border-radius: 8px;
+            border-left: 3px solid var(--purple-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .history-text {
+            font-size: 16px;
+        }
+        
+        .history-translation {
+            font-size: 20px;
+            color: var(--pink-light);
+            text-shadow: 0 0 5px var(--pink-light);
+        }
+        
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            opacity: 0.7;
+            font-size: 1rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-shadow: 0 0 5px var(--purple-glow);
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(35, 15, 65, 0.3);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--purple-light);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--pink-light);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .output {
+                font-size: 20px;
+                padding: 20px;
+            }
+            
+            .letters-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            textarea {
+                padding: 12px;
+            }
+            
+            .output {
+                font-size: 18px;
+                padding: 15px;
+            }
+            
+            .letters-grid {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+                gap: 10px;
+            }
+            
+            .letter-card {
+                padding: 10px;
+            }
+            
+            .namandari-char {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle container -->
+    <div id="particles-js"></div>
+    
+    <!-- Blurred background -->
+    <div class="blurred-bg"></div>
+    
+    <!-- Glowing orbs -->
+    <div class="orbs">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-dragon"></i> Hali Namandari</h1>
+            <p class="subtitle">Enhanced Translator with Particle Effects</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="panel">
+                <div class="panel-title">
+                    <i class="fas fa-keyboard"></i> English Input
+                </div>
+                <textarea id="input" placeholder="Enter English text to translate...">Hali Namandari</textarea>
+            </div>
+            
+            <div class="panel">
+                <div class="panel-title">
+                    <i class="fas fa-scroll"></i> Hali Namandari Translation
+                </div>
+                <div class="output" id="output">Translation will appear here...</div>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <button onclick="translateText()">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Translate</span>
+            </button>
+            <button class="clear-btn" onclick="clearText()">
+                <i class="fas fa-broom"></i>
+                <span>Clear</span>
+            </button>
+        </div>
+        
+        <div class="alphabet-section">
+            <h2 class="alphabet-title">Hali Namandari Alphabet</h2>
+            <div class="letters-grid" id="letters-grid">
+                <!-- Letters will be inserted by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="history-section">
+            <h2 class="history-title">Translation History</h2>
+            <div class="history-list" id="history-list">
+                <!-- History items will be inserted by JavaScript -->
+            </div>
+        </div>
+        
+        <footer>
+            <p>Hali Namandari Translator | With Particle Effects & History</p>
+        </footer>
+    </div>
+
+    <!-- Include particles.js library -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Initialize particles.js
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 120,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": ["#8c52ff", "#c874ff", "#ff8cdb"]
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.5,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 3,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#8c52ff",
+                        "opacity": 0.4,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 3,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": true,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+        });
+
+        // Complete Namandari mapping
+        const namandariAlphabet = {
+            'a': { char: '𑀦', name: 'Ah' },
+            'b': { char: '𑀩', name: 'Bah' },
+            'c': { char: '𑀘', name: 'Chah' },
+            'd': { char: '𑀤', name: 'Dah' },
+            'e': { char: '𑀬', name: 'Eh' },
+            'f': { char: '𑀨', name: 'Fah' },
+            'g': { char: '𑀕', name: 'Gah' },
+            'h': { char: '𑀳', name: 'Hah' },
+            'i': { char: '𑀨', name: 'Ee' },
+            'j': { char: '𑀚', name: 'Jah' },
+            'k': { char: '𑀓', name: 'Kah' },
+            'l': { char: '𑀮', name: 'Lah' },
+            'm': { char: '𑀫', name: 'Mah' },
+            'n': { char: '𑀦', name: 'Nah' },
+            'o': { char: '𑀭', name: 'Oh' },
+            'p': { char: '𑀧', name: 'Pah' },
+            'q': { char: '𑀔', name: 'Qah' },
+            'r': { char: '𑀭', name: 'Rah' },
+            's': { char: '𑀲', name: 'Sah' },
+            't': { char: '𑀢', name: 'Tah' },
+            'u': { char: '𑀪', name: 'Oo' },
+            'v': { char: '𑀯', name: 'Vah' },
+            'w': { char: '𑀯', name: 'Wah' },
+            'x': { char: '𑀰', name: 'Shah' },
+            'y': { char: '𑀬', name: 'Yah' },
+            'z': { char: '𑀲', name: 'Zah' },
+            ' ': { char: ' ', name: 'Space' },
+            '.': { char: '.', name: 'Period' },
+            ',': { char: ',', name: 'Comma' },
+            '!': { char: '!', name: 'Exclamation' },
+            '?': { char: '?', name: 'Question' },
+            "'": { char: "'", name: 'Apostrophe' },
+            '"': { char: '"', name: 'Quote' },
+            '0': { char: '०', name: 'Zero' },
+            '1': { char: '१', name: 'One' },
+            '2': { char: '२', name: 'Two' },
+            '3': { char: '३', name: 'Three' },
+            '4': { char: '४', name: 'Four' },
+            '5': { char: '५', name: 'Five' },
+            '6': { char: '६', name: 'Six' },
+            '7': { char: '७', name: 'Seven' },
+            '8': { char: '८', name: 'Eight' },
+            '9': { char: '९', name: 'Nine' }
+        };
+
+        // Translation history array
+        let translationHistory = [];
+
+        function translateToNamandari(text) {
+            let output = '';
+            const lowerText = text.toLowerCase();
+            
+            for (let i = 0; i < lowerText.length; i++) {
+                const char = lowerText[i];
+                if (namandariAlphabet[char]) {
+                    output += namandariAlphabet[char].char;
+                } else {
+                    output += char;
+                }
+            }
+            
+            return output;
+        }
+
+        function translateText() {
+            const inputText = document.getElementById('input').value.trim();
+            
+            if (!inputText) {
+                // Add visual feedback for error
+                const input = document.getElementById('input');
+                input.style.boxShadow = '0 0 20px #ff4757';
+                setTimeout(() => {
+                    input.style.boxShadow = '';
+                }, 1000);
+                return;
+            }
+            
+            const translatedText = translateToNamandari(inputText);
+            document.getElementById('output').textContent = translatedText;
+            
+            // Add to history
+            addToHistory(inputText, translatedText);
+            
+            // Add visual feedback
+            const output = document.getElementById('output');
+            output.style.boxShadow = '0 0 25px var(--pink-light)';
+            setTimeout(() => {
+                output.style.boxShadow = '';
+            }, 800);
+        }
+
+        function clearText() {
+            document.getElementById('input').value = '';
+            document.getElementById('output').textContent = 'Translation will appear here...';
+            
+            // Add visual feedback
+            const buttons = document.querySelectorAll('button');
+            buttons[1].style.boxShadow = '0 0 25px var(--pink-light)';
+            setTimeout(() => {
+                buttons[1].style.boxShadow = '';
+            }, 800);
+        }
+
+        function addToHistory(english, namandari) {
+            // Add to beginning of history array
+            translationHistory.unshift({
+                english,
+                namandari,
+                timestamp: new Date().toLocaleTimeString()
+            });
+            
+            // Keep only the last 10 translations
+            if (translationHistory.length > 10) {
+                translationHistory.pop();
+            }
+            
+            // Update history display
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+            
+            if (translationHistory.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; opacity: 0.7;">No translation history yet</p>';
+                return;
+            }
+            
+            translationHistory.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-text">${item.english}</div>
+                    <div class="history-translation">${item.namandari}</div>
+                `;
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        function generateAlphabetGrid() {
+            const grid = document.getElementById('letters-grid');
+            grid.innerHTML = '';
+            
+            for (const [englishChar, data] of Object.entries(namandariAlphabet)) {
+                if (englishChar.length === 1 && englishChar.match(/[a-z0-9]/i)) {
+                    const card = document.createElement('div');
+                    card.className = 'letter-card';
+                    card.innerHTML = `
+                        <div class="english-char">${englishChar.toUpperCase()}</div>
+                        <div class="namandari-char">${data.char}</div>
+                        <div class="char-name">${data.name}</div>
+                    `;
+                    
+                    // Add click event to insert character
+                    card.addEventListener('click', () => {
+                        const input = document.getElementById('input');
+                        input.value += englishChar;
+                        input.focus();
+                        
+                        // Visual feedback
+                        card.style.boxShadow = '0 0 20px var(--pink-light)';
+                        setTimeout(() => {
+                            card.style.boxShadow = '';
+                        }, 500);
+                    });
+                    
+                    grid.appendChild(card);
+                }
+            }
+        }
+
+        // Initialize with translation and generate alphabet grid
+        window.onload = function() {
+            translateText();
+            generateAlphabetGrid();
+            updateHistoryDisplay();
+            
+            // Add initial animation
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 300);
+        };
+    </script>
+</body>
+</html>
